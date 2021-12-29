@@ -12,7 +12,7 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SERVER_PORT 1235
+#define SERVER_PORT 1238
 #define QUEUE_SIZE 5
 #define BUF_SIZE 1024
 
@@ -100,6 +100,55 @@ void add_friends(int index, char *login_friend){
 
 }
 
+void deleted_friends(int index, char *login_friend){
+    int user_found;
+    for (int i=0;i<users_registered;i++){
+        user_found = strcmp(list_user[i].login,login_friend);
+        if(user_found == 0 && index != i && list_user[index].friends[i]==1){
+             
+            list_user[index].friends[i]=0;
+            char buff[]="Deleted friend\n";
+            int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
+            printf("%s Deleted friend with login : %s\n",list_user[index].login,login_friend);
+            return;
+        }
+            
+
+    }
+    //pomyslec/ zmienic opis
+    char buff[]="User doesn't exist\n";  
+    int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
+
+}
+
+void receive_mss(int index, char *login_friend,char mss[]){
+    int user_found;
+    char send_mss[4+LOGIN_SIZE+BUF_SIZE]="m\t";
+    for (int i=0;i<users_registered;i++){
+        user_found = strcmp(list_user[i].login,login_friend);
+        if(user_found == 0 && index != i && list_user[index].friends[i]==1){
+            strcat(send_mss,list_user[index].login);
+            strcat(send_mss,"\t");
+            strcat(send_mss,mss);
+            strcat(send_mss,"\n");
+            int status = write(list_user[i].connection_socket_descriptor,send_mss,sizeof(send_mss));
+            char buff[]="Message sent\n";
+            int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
+
+            printf("%s sent a message to : %s\n",list_user[index].login,login_friend);
+            return;
+        }
+            
+
+    }
+    //pomyslec/ zmienic opis
+    char buff[]="User doesn't exist\n";  
+    int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
+
+    
+}
+
+
 int login(int connection_socket_descriptor, char buff[FIRST_READ]){
 
     int index_user;
@@ -142,7 +191,6 @@ int login(int connection_socket_descriptor, char buff[FIRST_READ]){
         else{
             char *str = malloc(NUMER_OF_USERS*(LOGIN_SIZE+2)*sizeof(char));
             send_friends(index_user,str);
-            printf("%d\n",strlen(str));
             int status_send_list = write(connection_socket_descriptor,str,strlen(str));
 
             //char buff[]="Login successful\n";
@@ -159,6 +207,8 @@ int login(int connection_socket_descriptor, char buff[FIRST_READ]){
     }
 
 }
+
+
 
 void register_new(int connection_socket_descriptor, char buff[FIRST_READ]){
 
@@ -209,21 +259,42 @@ void register_new(int connection_socket_descriptor, char buff[FIRST_READ]){
 
 
 
+
 void wait_for_instruction(struct thread_data_t *th_data){
     while(1){
-        char buff[BUF_SIZE]="";
+        char buff[4+LOGIN_SIZE+BUF_SIZE]="";
         int readOutput = read(list_user[th_data->index_user].connection_socket_descriptor, buff, sizeof(buff));
+        if (readOutput<0){
+            puts("Blad z odczytaniem danych klient!");
+
+        }
         int size_of_login=0;
+        int size_of_mss =0;
         char logging_login[LOGIN_SIZE]="";
+        char mss[BUF_SIZE]="";
         for(int i=2;i<LOGIN_SIZE+2 && buff[i]!='\t';i++){
             logging_login[i-2]=buff[i];
             size_of_login=i;
         }
         
+        
         if(buff[0]=='f'){
+
             add_friends(th_data->index_user,logging_login);
             
         }
+        else if(buff[0]=='d'){
+            deleted_friends(th_data->index_user,logging_login);
+        }
+        else if(buff[0]=='m'){
+            for(int i=2+size_of_login;i<BUF_SIZE+size_of_login+2 && buff[i]!='\t';i++){
+            mss[i-2-size_of_login]=buff[i];
+            size_of_mss=i;
+            }
+            receive_mss(th_data->index_user,logging_login,mss);
+
+        }
+
         
     }
 }
@@ -279,16 +350,6 @@ void handleConnection(int connection_socket_descriptor) {
     {
         register_new(connection_socket_descriptor,buff);
     }
-    
-
-
-
-
-    
-
-
-    
-   
 
 }
 
