@@ -89,6 +89,51 @@ public class Client {
         return true;
     }
 
+    public boolean deleted_friend(String login_add) throws IOException {
+        PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+
+
+        writer.println("d"+"\t"+login_add+"\t");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        String serverMessage = reader.readLine();
+        System.out.println(serverMessage);
+        if(serverMessage.equals("Deleted friend")){
+            friends.remove(login_add);
+
+        }
+        System.out.println(friends);
+
+        return true;
+    }
+
+    public boolean send_mss(String to_who_mss, String mss) throws IOException {
+        PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+
+
+        writer.println("m"+"\t"+to_who_mss+"\t"+mss+"\t");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        String serverMessage = reader.readLine();
+        if(serverMessage.equals("Message sent")){
+            System.out.println(serverMessage);
+
+        }
+
+        return true;
+    }
+
+    public boolean receive_mss() throws IOException {
+
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            String serverMessage = reader.readLine();
+            System.out.println(serverMessage);
+            return true;
+    }
+
+
+
 
 
 
