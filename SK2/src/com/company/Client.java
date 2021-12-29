@@ -17,6 +17,8 @@ public class Client {
     private String password;
     private Socket clientSocket;
     private List<String> friends ;
+    public static String host="localhost";
+    public static Integer port=1238;
 
     public Client(String login, String password, Socket clientSocket){
         this.login = login;
@@ -41,7 +43,7 @@ public class Client {
         this.password = password;
     }
 
-    public boolean login() throws IOException {
+    public String login() throws IOException {
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println("l"+"\t"+login+"\t"+password+"\t");
 
@@ -56,10 +58,10 @@ public class Client {
         //System.out.printf(serverMessage);
 
 
-        return true;
+        return serverMessage;
     }
 
-    public boolean register() throws IOException {
+    public String register() throws IOException {
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 
         writer.println("r"+"\t"+login+"\t"+password+"\t");
@@ -69,7 +71,7 @@ public class Client {
         System.out.println(serverMessage);
 
 
-        return true;
+        return serverMessage;
     }
 
     public boolean add_friend(String login_add) throws IOException {
