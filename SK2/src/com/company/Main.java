@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 
-        JFrame frame = new JFrame("Test");
+        JFrame frame = new JFrame("Gadu-Gadu");
         Login login = new Login();
         frame.setContentPane(login.getPanel1());
         login.setFrame(frame);
@@ -35,8 +35,7 @@ public class Main {
 ////        }
 //        //client.register();
 //        client.login();
-//        //client.add_friend("user2");
-//        //client.add_friend("user3");
+//
 //        client.send_mss("user2","test1 na xd");
 //        //client.receive_mss();
 //        clientSocket.close();

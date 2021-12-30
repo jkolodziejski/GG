@@ -20,7 +20,11 @@ public class Client {
     public static String host="localhost";
     public static Integer port=1238;
 
-    public Client(String login, String password, Socket clientSocket){
+    public Client(String login, String password, Socket clientSocket) throws Exception {
+        if(login.equals("") || password.equals("")) {
+            throw new Exception("Didn't creat user");
+        }
+        this.friends = new ArrayList<String>();
         this.login = login;
         this.password = password;
         this.clientSocket = clientSocket;
@@ -43,6 +47,11 @@ public class Client {
         this.password = password;
     }
 
+    public List<String> getFriends() {
+        return friends;
+    }
+
+
     public String login() throws IOException {
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println("l"+"\t"+login+"\t"+password+"\t");
@@ -52,8 +61,9 @@ public class Client {
         String serverMessage = reader.readLine();
 
         System.out.printf(serverMessage+"\n");
-        this.friends= new ArrayList<>(Arrays.asList(serverMessage.split("\t")));
-        //serverMessage = reader.readLine();
+        if (!serverMessage.equals("Wrong login") && !serverMessage.equals("Wrong password")) {
+            this.friends = new ArrayList<>(Arrays.asList(serverMessage.split("\t")));
+        }
 
         //System.out.printf(serverMessage);
 
@@ -132,6 +142,12 @@ public class Client {
             String serverMessage = reader.readLine();
             System.out.println(serverMessage);
             return true;
+    }
+
+    public void login_out() throws IOException {
+        PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+        writer.println("q"+"\t");
+
     }
 
 
