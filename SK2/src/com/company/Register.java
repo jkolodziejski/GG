@@ -3,6 +3,8 @@ package com.company;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -15,6 +17,8 @@ public class Register {
     private JLabel empty_error;
     private JFrame frame;
 
+    private Client client = null;
+
     private Client creat_user(String user, String password) throws Exception {
         Socket clientSocket = new Socket(Client.host, Client.port);
         Client client = new Client(user,password,clientSocket);
@@ -26,7 +30,7 @@ public class Register {
         registerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Client client = null;
+
                 user_exist.setVisible(false);
                 empty_error.setVisible(false);
                 try {
@@ -39,6 +43,26 @@ public class Register {
                     }
                     else {
                         Main_pulpit main_pulpit = new Main_pulpit(client);
+
+                        frame.addWindowListener(new WindowAdapter() {
+
+                            @Override
+                            public void windowClosing(WindowEvent e) {
+                                int confirm = JOptionPane.showOptionDialog(
+                                        null, "Are You Sure to Close Application?",
+                                        "Exit Confirmation", JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE, null, null, null);
+                                if (confirm == 0) {
+                                    try {
+                                        client.login_out();
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                    System.exit(0);
+
+                                }
+                            }
+                        });
                         frame.setContentPane(main_pulpit.getMain_pulpit_panel());
 
                         frame.pack();

@@ -18,7 +18,7 @@ public class Client {
     private Socket clientSocket;
     private List<String> friends ;
     public static String host="localhost";
-    public static Integer port=1238;
+    public static Integer port=1249;
 
     public Client(String login, String password, Socket clientSocket) throws Exception {
         if(login.equals("") || password.equals("")) {
@@ -150,6 +150,17 @@ public class Client {
 
     }
 
+
+    public void load_old_mss(String from_who) throws IOException {
+        PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+        writer.println("c"+"\t"+from_who+"\t");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        String serverMessage ;
+        do {
+            serverMessage= reader.readLine();
+            System.out.println(serverMessage);
+        }while(!serverMessage.equals("finish"));
+    }
 
 
 

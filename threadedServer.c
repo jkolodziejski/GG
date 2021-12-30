@@ -12,7 +12,7 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SERVER_PORT 1238
+#define SERVER_PORT 1249
 #define QUEUE_SIZE 5
 #define BUF_SIZE 1024
 
@@ -24,11 +24,12 @@
 
 typedef struct 
 {
+    int status;
     int connection_socket_descriptor;
     char login[NUMER_OF_USERS];
     char password[LOGIN_SIZE];
     int friends[NUMER_OF_USERS];
-    
+    char mss_to_friends[NUMER_OF_USERS][100*(4+LOGIN_SIZE+BUF_SIZE)];
 }user;
 
 
@@ -86,6 +87,7 @@ void add_friends(int index, char *login_friend){
         if(user_found== 0 && index != i && list_user[index].friends[i]==0){
              
             list_user[index].friends[i]=1;
+            list_user[i].friends[index]=1;
             char buff[]="Added friend\n";
             int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
             printf("%s added friend with login : %s\n",list_user[index].login,login_friend);
@@ -107,6 +109,7 @@ void deleted_friends(int index, char *login_friend){
         if(user_found == 0 && index != i && list_user[index].friends[i]==1){
              
             list_user[index].friends[i]=0;
+            list_user[i].friends[index]=0;
             char buff[]="Deleted friend\n";
             int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
             printf("%s Deleted friend with login : %s\n",list_user[index].login,login_friend);
@@ -126,18 +129,22 @@ void receive_mss(int index, char *login_friend,char mss[]){
     char send_mss[4+LOGIN_SIZE+BUF_SIZE]="m\t";
     for (int i=0;i<users_registered;i++){
         user_found = strcmp(list_user[i].login,login_friend);
-        if(user_found == 0 && index != i && list_user[index].friends[i]==1){
+        if(user_found == 0 && index != i && list_user[index].friends[i]==1 ){
             strcat(send_mss,list_user[index].login);
             strcat(send_mss,"\t");
             strcat(send_mss,mss);
             strcat(send_mss,"\n");
+            strcat(list_user[i].mss_to_friends[index],send_mss);
+            if(list_user[index].status==1){
             int status = write(list_user[i].connection_socket_descriptor,send_mss,sizeof(send_mss));
+            }
             char buff[]="Message sent\n";
             int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
 
             printf("%s sent a message to : %s\n",list_user[index].login,login_friend);
             return;
         }
+        
             
 
     }
@@ -148,6 +155,35 @@ void receive_mss(int index, char *login_friend,char mss[]){
     
 }
 
+
+void send_old_mss(int index, char *login_friend){
+    int user_found;
+    for (int i=0;i<users_registered;i++){
+        user_found = strcmp(list_user[i].login,login_friend);
+         if(user_found == 0 && index != i && list_user[index].friends[i]==1 ){
+             char mss[4+LOGIN_SIZE+BUF_SIZE];
+             int str_len = strlen(list_user[index].mss_to_friends[i]);
+             int long_mss=0;
+             for(int j=0;j<str_len;j++){
+                 if (list_user[index].mss_to_friends[i][j]=='\n'){
+                     
+                     write(list_user[index].connection_socket_descriptor,mss,long_mss);
+                     long_mss=0;
+                    memset(mss,0,strlen(mss));
+                    
+                 }
+             
+                
+                mss[long_mss]=list_user[index].mss_to_friends[i][j];
+                long_mss++;
+             }
+             write(list_user[index].connection_socket_descriptor,"\n",1);
+             write(list_user[index].connection_socket_descriptor,"finish\n",7);
+         }
+        
+
+    }
+}
 
 int login(int connection_socket_descriptor, char buff[FIRST_READ]){
 
@@ -197,6 +233,7 @@ int login(int connection_socket_descriptor, char buff[FIRST_READ]){
             //int readOutput = write(connection_socket_descriptor, buff, sizeof(buff));
             
             list_user[index_user].connection_socket_descriptor=connection_socket_descriptor;
+            list_user[index_user].status=1;
             printf("Login successful -- > %s\n", list_user[index_user].login);
             return index_user;
           
@@ -294,6 +331,15 @@ void wait_for_instruction(struct thread_data_t *th_data){
             receive_mss(th_data->index_user,logging_login,mss);
 
         }
+        else if(buff[0]=='c'){
+            send_old_mss(th_data->index_user,logging_login);
+        }
+        else if(buff[0]=='q'){
+            printf("status-->%d\n",list_user[th_data->index_user].status);
+            list_user[th_data->index_user].status=0;
+            puts("zmiana statusu");
+        }
+        
 
         
     }
