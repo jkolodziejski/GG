@@ -49,7 +49,9 @@ public class Login {
                         password_error.setVisible(true);
                     }
                     else{
+
                         Main_pulpit main_pulpit = new Main_pulpit(client);
+                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                         frame.addWindowListener(new WindowAdapter() {
 
                             @Override

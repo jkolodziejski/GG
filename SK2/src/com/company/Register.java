@@ -42,8 +42,10 @@ public class Register {
                         user_exist.setVisible(true);
                     }
                     else {
+                        client.getnewClientSocket();
+                        client.login();
                         Main_pulpit main_pulpit = new Main_pulpit(client);
-
+                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                         frame.addWindowListener(new WindowAdapter() {
 
                             @Override
@@ -61,6 +63,7 @@ public class Register {
                                     System.exit(0);
 
                                 }
+
                             }
                         });
                         frame.setContentPane(main_pulpit.getMain_pulpit_panel());
@@ -69,7 +72,6 @@ public class Register {
                         frame.setSize(500,400);
 
                         frame.setVisible(true);
-
 
                     }
                 } catch (Exception ex) {

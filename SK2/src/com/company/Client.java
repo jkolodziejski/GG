@@ -1,8 +1,6 @@
 package com.company;
 
 
-import org.w3c.dom.ls.LSOutput;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,7 +16,8 @@ public class Client {
     private Socket clientSocket;
     private List<String> friends ;
     public static String host="localhost";
-    public static Integer port=1249;
+    public static Integer port=1253;
+
 
     public Client(String login, String password, Socket clientSocket) throws Exception {
         if(login.equals("") || password.equals("")) {
@@ -47,8 +46,18 @@ public class Client {
         this.password = password;
     }
 
+    public void getnewClientSocket() throws IOException {
+        this.clientSocket.close();
+        Socket clientSocket_new = new Socket(Client.host,Client.port);
+        this.clientSocket=clientSocket_new;
+    }
+
     public List<String> getFriends() {
         return friends;
+    }
+
+    public String getFriend(int index){
+        return friends.get(index);
     }
 
 
@@ -151,15 +160,24 @@ public class Client {
     }
 
 
-    public void load_old_mss(String from_who) throws IOException {
+    public String  load_old_mss(String from_who) throws IOException {
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println("c"+"\t"+from_who+"\t");
         BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String serverMessage ;
-        do {
+        String serverMessage = "";
+        String full_mss="";
+        serverMessage= reader.readLine();
+        while(!serverMessage.equals("finish")) {
+
+
+
+            full_mss+=serverMessage.substring(2,serverMessage.length());
+            full_mss+="\n";
             serverMessage= reader.readLine();
-            System.out.println(serverMessage);
-        }while(!serverMessage.equals("finish"));
+
+        }
+        return full_mss;
+
     }
 
 

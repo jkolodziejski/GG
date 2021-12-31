@@ -12,7 +12,7 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SERVER_PORT 1249
+#define SERVER_PORT 1253
 #define QUEUE_SIZE 5
 #define BUF_SIZE 1024
 
@@ -135,6 +135,7 @@ void receive_mss(int index, char *login_friend,char mss[]){
             strcat(send_mss,mss);
             strcat(send_mss,"\n");
             strcat(list_user[i].mss_to_friends[index],send_mss);
+            strcat(list_user[index].mss_to_friends[i],send_mss);
             if(list_user[index].status==1){
             int status = write(list_user[i].connection_socket_descriptor,send_mss,sizeof(send_mss));
             }
@@ -161,6 +162,7 @@ void send_old_mss(int index, char *login_friend){
     for (int i=0;i<users_registered;i++){
         user_found = strcmp(list_user[i].login,login_friend);
          if(user_found == 0 && index != i && list_user[index].friends[i]==1 ){
+             puts("Wiadomosc");
              char mss[4+LOGIN_SIZE+BUF_SIZE];
              int str_len = strlen(list_user[index].mss_to_friends[i]);
              int long_mss=0;
