@@ -12,7 +12,7 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SERVER_PORT 1253
+#define SERVER_PORT 1255
 #define QUEUE_SIZE 5
 #define BUF_SIZE 1024
 
@@ -317,7 +317,7 @@ void wait_for_instruction(struct thread_data_t *th_data){
         }
         
         
-        if(buff[0]=='f'){
+         if(buff[0]=='f'){
 
             add_friends(th_data->index_user,logging_login);
             

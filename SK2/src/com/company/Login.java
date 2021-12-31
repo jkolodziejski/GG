@@ -29,7 +29,7 @@ public class Login {
     }
 
 
-    public Login() {
+    public Login() throws IOException {
         Login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -105,6 +105,8 @@ public class Login {
 
             }
         });
+
+
     }
 
     public void setFrame(JFrame frame) {

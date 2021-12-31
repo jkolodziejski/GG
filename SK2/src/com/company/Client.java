@@ -16,7 +16,9 @@ public class Client {
     private Socket clientSocket;
     private List<String> friends ;
     public static String host="localhost";
-    public static Integer port=1253;
+    public static Integer port=1255;
+
+    private boolean status=true;
 
 
     public Client(String login, String password, Socket clientSocket) throws Exception {
@@ -94,6 +96,7 @@ public class Client {
     }
 
     public boolean add_friend(String login_add) throws IOException {
+        status=false;
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 
 
@@ -105,12 +108,14 @@ public class Client {
         if(serverMessage.equals("Added friend")){
             friends.add(login_add);
 
-        }
 
+        }
+        status=true;
         return true;
     }
 
     public boolean deleted_friend(String login_add) throws IOException {
+        status=false;
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 
 
@@ -124,11 +129,12 @@ public class Client {
 
         }
         System.out.println(friends);
-
+        status=true;
         return true;
     }
 
     public boolean send_mss(String to_who_mss, String mss) throws IOException {
+        status=false;
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 
 
@@ -140,17 +146,18 @@ public class Client {
             System.out.println(serverMessage);
 
         }
-
+        status=true;
         return true;
     }
 
-    public boolean receive_mss() throws IOException {
+    public String receive_mss() throws IOException {
 
-
+            String serverMessage="";
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String serverMessage = reader.readLine();
-            System.out.println(serverMessage);
-            return true;
+            if(reader.ready() && status) {
+                serverMessage = reader.readLine();
+            }
+            return serverMessage;
     }
 
     public void login_out() throws IOException {
@@ -163,6 +170,7 @@ public class Client {
     public String  load_old_mss(String from_who) throws IOException {
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println("c"+"\t"+from_who+"\t");
+        status=false;
         BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String serverMessage = "";
         String full_mss="";
@@ -176,6 +184,7 @@ public class Client {
             serverMessage= reader.readLine();
 
         }
+        status=true;
         return full_mss;
 
     }
