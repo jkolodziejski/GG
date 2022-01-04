@@ -16,7 +16,7 @@ public class Client {
     private Socket clientSocket;
     private List<String> friends ;
     public static String host="localhost";
-    public static Integer port=1255;
+    public static Integer port=1257;
 
     private boolean status=true;
 
@@ -46,6 +46,10 @@ public class Client {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
     }
 
     public void getnewClientSocket() throws IOException {
@@ -168,9 +172,10 @@ public class Client {
 
 
     public String  load_old_mss(String from_who) throws IOException {
+        status=false;
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println("c"+"\t"+from_who+"\t");
-        status=false;
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String serverMessage = "";
         String full_mss="";
