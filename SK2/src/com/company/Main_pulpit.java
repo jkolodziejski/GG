@@ -37,7 +37,7 @@ public class Main_pulpit {
 
     public Main_pulpit(Client client) throws IOException {
         this.client = client;
-        Mss_listener mss_listener = new Mss_listener(client, list_friends);
+        Mss_listener mss_listener = new Mss_listener(this.client, list_friends);
         Thread thread = new Thread(mss_listener);
         thread.start();
         nick_name.setText(client.getLogin());

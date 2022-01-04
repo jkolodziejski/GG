@@ -24,7 +24,6 @@ public class Mss_listener implements Runnable {
                 message = client.receive_mss();
 
                 if (!message.equals("")) {
-                    System.out.println(message.substring(0,2));
                     if(message.startsWith("f\t")){
                         message=message.substring(2);
 
@@ -33,6 +32,7 @@ public class Mss_listener implements Runnable {
 
                     }
                     else {
+                        System.out.println("Watek-else"+message);
                         message = message.substring(2);
                         message = message.substring(0, message.indexOf("\t"));
                         System.out.println(message);
