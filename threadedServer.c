@@ -12,7 +12,7 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SERVER_PORT 1255
+#define SERVER_PORT 1256
 #define QUEUE_SIZE 5
 #define BUF_SIZE 1024
 
@@ -90,6 +90,13 @@ void add_friends(int index, char *login_friend){
             list_user[i].friends[index]=1;
             char buff[]="Added friend\n";
             int readOutput = write(list_user[index].connection_socket_descriptor ,buff, sizeof(buff));
+            if(list_user[i].status==1){
+                char *list_friends_to_send=malloc(2+NUMER_OF_USERS*(LOGIN_SIZE+2)*sizeof(char));
+                strcat(list_friends_to_send,"f\t");
+                send_friends(i,list_friends_to_send);
+                int readOutput = write(list_user[i].connection_socket_descriptor ,list_friends_to_send, 2+NUMER_OF_USERS*(LOGIN_SIZE+2)*sizeof(char));
+                
+            }
             printf("%s added friend with login : %s\n",list_user[index].login,login_friend);
             return;
         }
@@ -126,16 +133,19 @@ void deleted_friends(int index, char *login_friend){
 
 void receive_mss(int index, char *login_friend,char mss[]){
     int user_found;
-    char send_mss[4+LOGIN_SIZE+BUF_SIZE]="m\t";
+   
     for (int i=0;i<users_registered;i++){
         user_found = strcmp(list_user[i].login,login_friend);
         if(user_found == 0 && index != i && list_user[index].friends[i]==1 ){
+            char *send_mss=malloc((4+LOGIN_SIZE+BUF_SIZE)*sizeof(char));
+            strcat(send_mss,"m\t");
             strcat(send_mss,list_user[index].login);
             strcat(send_mss,"\t");
             strcat(send_mss,mss);
             strcat(send_mss,"\n");
             strcat(list_user[i].mss_to_friends[index],send_mss);
             strcat(list_user[index].mss_to_friends[i],send_mss);
+            printf("Send new mss - > %s\n",send_mss);
             if(list_user[index].status==1){
             int status = write(list_user[i].connection_socket_descriptor,send_mss,sizeof(send_mss));
             }
@@ -168,7 +178,7 @@ void send_old_mss(int index, char *login_friend){
              int long_mss=0;
              for(int j=0;j<str_len;j++){
                  if (list_user[index].mss_to_friends[i][j]=='\n'){
-                     
+                     printf("send_old_mss -> %s\n",mss);
                      write(list_user[index].connection_socket_descriptor,mss,long_mss);
                      long_mss=0;
                     memset(mss,0,strlen(mss));
@@ -181,6 +191,7 @@ void send_old_mss(int index, char *login_friend){
              }
              write(list_user[index].connection_socket_descriptor,"\n",1);
              write(list_user[index].connection_socket_descriptor,"finish\n",7);
+             return;
          }
         
 
