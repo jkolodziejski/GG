@@ -12,7 +12,7 @@
 #include <time.h>
 #include <pthread.h>
 
-#define SERVER_PORT 1256
+#define SERVER_PORT 1257
 #define QUEUE_SIZE 5
 #define BUF_SIZE 1024
 
