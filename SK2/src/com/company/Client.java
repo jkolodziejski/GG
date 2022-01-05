@@ -155,13 +155,19 @@ public class Client {
     }
 
     public String receive_mss() throws IOException {
+        String serverMessage = "";
+            if(status) {
 
-            String serverMessage="";
-            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            if(reader.ready() && status) {
-                serverMessage = reader.readLine();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                if (reader.ready() && status && (serverMessage = reader.readLine()) != null) {
+                    System.out.println(reader.ready());
+                    System.out.println("Status in if");
+                    System.out.println(serverMessage);
+                }
+
             }
-            return serverMessage;
+        return serverMessage;
     }
 
     public void login_out() throws IOException {
@@ -173,6 +179,7 @@ public class Client {
 
     public String  load_old_mss(String from_who) throws IOException {
         status=false;
+        System.out.println("Status change");
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         writer.println("c"+"\t"+from_who+"\t");
 

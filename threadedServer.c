@@ -94,7 +94,8 @@ void add_friends(int index, char *login_friend){
                 char *list_friends_to_send=malloc(2+NUMER_OF_USERS*(LOGIN_SIZE+2)*sizeof(char));
                 strcat(list_friends_to_send,"f\t");
                 send_friends(i,list_friends_to_send);
-                int readOutput = write(list_user[i].connection_socket_descriptor ,list_friends_to_send, 2+NUMER_OF_USERS*(LOGIN_SIZE+2)*sizeof(char));
+                printf("size -- > %d mess -> %s",(2+NUMER_OF_USERS*(LOGIN_SIZE+2)), list_friends_to_send);
+                int readOutput = write(list_user[i].connection_socket_descriptor ,list_friends_to_send, 800);
                 
             }
             printf("%s added friend with login : %s\n",list_user[index].login,login_friend);

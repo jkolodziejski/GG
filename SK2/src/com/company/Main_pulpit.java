@@ -1,7 +1,6 @@
 package com.company;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -17,6 +16,7 @@ public class Main_pulpit {
     private JTextField text_send_mss;
     private JButton sendButton;
     private JButton newMessageButton;
+    private JButton deleteFriendButton;
     private Client client;
     private String to_who;
 
@@ -91,6 +91,20 @@ public class Main_pulpit {
             }
         });
 
+        deleteFriendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = list_friends.getSelectedIndex();
+                to_who=client.getFriend(index);
+                try {
+
+                    client.deleted_friend(to_who);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                set_list(client.getFriends(),list_friends);
+            }
+        });
     }
 
     public JPanel getMain_pulpit_panel() {

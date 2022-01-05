@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="main_pulpit_panel" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="400"/>
+      <xy x="20" y="20" width="512" height="400"/>
     </constraints>
     <properties>
       <enabled value="true"/>
@@ -47,14 +47,6 @@
           <model/>
         </properties>
       </component>
-      <component id="aaf1e" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Login"/>
-        </properties>
-      </component>
       <component id="5ce58" class="javax.swing.JTextField" binding="text_send_mss">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -75,10 +67,10 @@
       </component>
       <component id="67b97" class="javax.swing.JButton" binding="newMessageButton" default-binding="true">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="New message"/>
+          <text value="Load chat"/>
         </properties>
       </component>
       <component id="a766d" class="javax.swing.JTextField" binding="add_friend_filed">
@@ -88,6 +80,22 @@
           </grid>
         </constraints>
         <properties/>
+      </component>
+      <component id="59467" class="javax.swing.JButton" binding="deleteFriendButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Delete Friend"/>
+        </properties>
+      </component>
+      <component id="aaf1e" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Login"/>
+        </properties>
       </component>
     </children>
   </grid>
