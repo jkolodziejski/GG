@@ -10,8 +10,10 @@ public class Mss_listener implements Runnable {
     private Client client;
     private JList list_friends;
     private String message = "";
+    private List<String> updated_list_friends;
 
-    public Mss_listener(Client client, JList list_friends) {
+    public Mss_listener(Client client, JList list_friends,List<String> updated_list_friends) {
+        this.updated_list_friends=updated_list_friends;
         this.client = client;
         this.list_friends = list_friends;
     }
@@ -32,15 +34,13 @@ public class Mss_listener implements Runnable {
 
                     }
                     else {
-                        System.out.println("Watek-else"+message);
                         message = message.substring(2);
                         message = message.substring(0, message.indexOf("\t"));
                         System.out.println(message);
-                        List<String> list_friends_copy = new ArrayList<>(client.getFriends());
-                        for (int i = 0; i < list_friends_copy.size(); i++) {
-                            if (list_friends_copy.get(i).equals(message)) {
-                                list_friends_copy.set(i, message + "*");
-                                Main_pulpit.set_list(list_friends_copy, list_friends);
+                        for (int i = 0; i < updated_list_friends.size(); i++) {
+                            if (updated_list_friends.get(i).equals(message)) {
+                                updated_list_friends.set(i, message + "*");
+                                Main_pulpit.set_list(updated_list_friends, list_friends);
                             }
                         }
                     }

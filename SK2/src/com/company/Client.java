@@ -99,6 +99,8 @@ public class Client {
         return serverMessage;
     }
 
+
+
     public boolean add_friend(String login_add) throws IOException {
         status=false;
         PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -108,12 +110,15 @@ public class Client {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String serverMessage = reader.readLine();
-        System.out.println(serverMessage);
+
+
         if(serverMessage.equals("Added friend")){
             friends.add(login_add);
 
 
         }
+
+
         status=true;
         return true;
     }
